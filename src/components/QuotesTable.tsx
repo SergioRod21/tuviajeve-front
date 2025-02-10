@@ -1,0 +1,95 @@
+import { useState } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+
+
+interface TripData {
+    tripdata: { name: string, quotation: { name: string, price: number }[] }[]
+}
+
+const VehicleSwitch = () => {
+    return (
+        <div className="w-1/6">
+            <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                <input type="checkbox" name="toggle" id="toggle" className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+                <label htmlFor="toggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer">vehiculo</label>
+            </div>
+        </div>
+    )
+}
+
+
+
+const detailsTable = (details: { name: string, price: number }[], displayed: boolean) => {
+    return (
+        <Table className={`m-auto bg-white w-full rounded-lg shadow-lg ${displayed ? 'block' : 'hidden'}`}>
+            {details.map((detail) => {
+                return (
+                    <TableRow key={detail.name} className="w-full flex h-8 overflow-y-hidden justify-center items-center">
+                        <TableCell className="text-center align-middle w-3/4 py-3">{detail.name}</TableCell>
+                        <TableCell className="text-center align-middle w-full py-3">{detail.price} $</TableCell>
+                    </TableRow>
+                )
+            })}
+        </Table>
+    )
+}
+
+
+const baseLogoUrl = '../../images/';
+
+export default function CollapsibleTable({ tripdata }: TripData) {
+
+    const [openDetails, setOpenDetails] = useState({ index: -1, open: false });
+
+    return (
+        <>
+            <Table className='m-auto bg-white w-11/12 mt-24 rounded-lg shadow-lg'>
+                <TableCaption>* Precios aproximados</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="text-center align-middle">Empresa</TableHead>
+                        <TableHead className="text-center align-middle">Precio</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody className='w-full'>
+                    {tripdata.map((trip, index) => {
+                        trip.quotation.sort((a, b) => a.price - b.price)
+                        return (
+                            <>
+                                <TableRow key={index} className="w-full">
+                                    <TableCell key={index} className="text-center align-middle w-1/2 p-6"><img src={`/images/${trip.name}.png`} className='w-3/4' alt={trip.name} /></TableCell>
+                                    <TableCell key={index} className="text-center align-middle py-4">{`Desde ${trip.quotation[0].price} $`}</TableCell>
+                                    <TableCell key={`${index}-arrow`} onClick={() => { setOpenDetails({ index, open: !openDetails.open || openDetails.index !== index }) }} className="text-center align-middle w-1/6 cursor-pointer">
+                                        {openDetails.open && openDetails.index === index ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 mx-auto cursor-pointer icon icon-tabler icons-tabler-outline icon-tabler-chevron-up">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 15l6 -6l6 6" />
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow className="w-full">
+                                    <TableCell colSpan={3} className="p-0">
+                                        {detailsTable(trip.quotation, openDetails.open && openDetails.index === index)}
+                                    </TableCell>
+                                </TableRow>
+                            </>
+                        )
+
+                    })}
+                </TableBody>
+            </Table>
+        </>
+    );
+}

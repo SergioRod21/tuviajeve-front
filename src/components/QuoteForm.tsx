@@ -4,9 +4,16 @@ import { Button } from "@/components/ui/button";
 
 import { useState, useEffect } from "react";
 
+import { Navigate, useNavigate } from 'react-router';
+
 import LocationList from '@/components/LocationsList'
+import Spinner from "./Spinner";
+import { isPromise } from "util/types";
 
 function QuoteForm() {
+
+  const navigate = useNavigate();
+
   interface Location {
     address1: string;
     lat: number;
@@ -21,6 +28,8 @@ function QuoteForm() {
   const [selectedOrigin, setSelectedOrigin] = useState<Location>();
   const [selectedDestination, setSelectedDestination] = useState<Location>();
 
+  const [consultingData, setConsultingData] = useState(false);
+
   const apikey = import.meta.env.VITE_GEOAPIFY_API_KEY;
 
   var requestOptions = {
@@ -28,7 +37,8 @@ function QuoteForm() {
   };
 
   const getQuote = async () => {
-    console.log("Dentro de getQuote")
+    if (!selectedOrigin || !selectedDestination) return;
+    await setConsultingData(true);
     const response = await fetch(`http://localhost:3000/api/quotation`, {
       method: "POST",
       headers: {
@@ -45,10 +55,13 @@ function QuoteForm() {
         },
       })
     });
+    const data = await response.json();
+    await setConsultingData(false);
+    await navigate('/trip', { state: { tripData: data } });
   }
 
   const getAutocomplete = (text: string, isOrigin: boolean) => {
-  if(text === "") return;
+    if (text === "") return;
     fetch(
       `https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&apiKey=${apikey}`,
       requestOptions
@@ -81,10 +94,10 @@ function QuoteForm() {
   useEffect(() => {
     if (!selectedOrigin) {
       const getData = setTimeout(() => {
-      getAutocomplete(origin, true);
-    }, 400);
+        getAutocomplete(origin, true);
+      }, 400);
 
-    return () => clearTimeout(getData);
+      return () => clearTimeout(getData);
     }
   }, [origin]);
 
@@ -93,34 +106,23 @@ function QuoteForm() {
       const getData = setTimeout(() => {
         getAutocomplete(destination, false);
       }, 400);
-  
+
       return () => clearTimeout(getData);
     }
   }, [destination]);
 
   useEffect(() => {
-    console.log(originOptions);
-  }, [originOptions]);
-
-  useEffect(() => {
-    console.log(destinationOptions);
-  }, [destinationOptions]);
-
-
-  useEffect(() => {
-    console.log("Origen seleccionado: ", selectedOrigin);
     selectedOrigin ? setOrigin(`${selectedOrigin.address1}`) : setOrigin("");
     setOriginOptions([]);
-  },[selectedOrigin])
+  }, [selectedOrigin])
 
   useEffect(() => {
-    console.log("Destino seleccionado: ", selectedDestination);
     selectedDestination ? setDestination(`${selectedDestination.address1}`) : setDestination("");
-    setDestinationOptions([]); 
-  },[selectedDestination])
+    setDestinationOptions([]);
+  }, [selectedDestination])
 
   return (
-    <div className="flex flex-col justify-start gap-y-8 items-center h-3/6">
+    <div className="absolute top-1/3 flex flex-col justify-start gap-y-8 items-center h-3/6 w-full">
       <div className="flex flex-col w-5/6 items-center relative">
         <Label className="self-start mb-2 text-white text-lg">
           Punto de Salida
@@ -133,11 +135,14 @@ function QuoteForm() {
             onChange={(event) => setOrigin(event.target.value)}
             disabled={!!selectedOrigin}
           />
-          <Button onClick={() => setSelectedOrigin(undefined)} className={`${selectedOrigin ? "flex" : "hidden"} items-center absolute right-0 top-0 h-full bg-slate-200 font-semibold text-slate-800 hover:text-slate-200 p-6 text-lg`}>  
+          <Button onClick={() => setSelectedOrigin(undefined)} className={`${selectedOrigin ? "flex" : "hidden"} items-center absolute right-0 top-0 h-full bg-slate-200 font-semibold text-slate-800 hover:text-slate-200 p-6 text-lg`}>
             X
           </Button>
         </div>
-        <LocationList options={originOptions} isOrigin={true} setSelectedOrigin={setSelectedOrigin} setSelectedDestination={setSelectedDestination}/>
+        <LocationList options={originOptions} isOrigin={true} setSelectedOrigin={setSelectedOrigin} setSelectedDestination={setSelectedDestination} />
+      </div>
+      <div className="bg-blue-500 w-8 h-8 flex justify-center items-center rounded-lg cursor-pointer shadow-xl">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-transfer text-white p-1"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 10h-16l5.5 -6" /><path d="M4 14h16l-5.5 6" /></svg>
       </div>
       <div className="flex flex-col w-5/6 items-center relative">
         <Label className="self-start mb-2 text-white text-lg">
@@ -151,14 +156,14 @@ function QuoteForm() {
             onChange={(event) => setDestination(event.target.value)}
             disabled={!!selectedDestination}
           />
-            <Button onClick={() => setSelectedDestination(undefined)} className={`${selectedDestination ? "flex" : "hidden"} items-center absolute right-0 top-0 h-full bg-slate-200 font-semibold text-slate-800 hover:text-slate-200 p-6 text-lg`}>
-              X
-            </Button>
+          <Button onClick={() => setSelectedDestination(undefined)} className={`${selectedDestination ? "flex" : "hidden"} items-center absolute right-0 top-0 h-full bg-slate-200 font-semibold text-slate-800 hover:text-slate-200 p-6 text-lg`}>
+            X
+          </Button>
         </div>
-        <LocationList options={destinationOptions} isOrigin={false} setSelectedOrigin={setSelectedOrigin} setSelectedDestination={setSelectedDestination}/>
+        <LocationList options={destinationOptions} isOrigin={false} setSelectedOrigin={setSelectedOrigin} setSelectedDestination={setSelectedDestination} />
       </div>
-      <Button className="bg-blue-500 font-semibold text-white p-6 text-lg rounded-xl" onClick={() => getQuote()}>
-        Consultar
+      <Button className="bg-blue-500 font-semibold text-white p-6 text-lg rounded-xl w-2/6" onClick={() => getQuote()}>
+        {consultingData ? <Spinner /> : "Consultar"}
       </Button>
     </div>
   );
