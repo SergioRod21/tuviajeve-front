@@ -1,14 +1,12 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import LocationList from '@/components/LocationsList'
+import Map from '@/components/Map'
 
 import { useState, useEffect } from "react";
-
-import { Navigate, useNavigate } from 'react-router';
-
-import LocationList from '@/components/LocationsList'
+import { useNavigate } from 'react-router';
 import Spinner from "./Spinner";
-import { isPromise } from "util/types";
 
 function QuoteForm() {
 
@@ -30,11 +28,8 @@ function QuoteForm() {
 
   const [consultingData, setConsultingData] = useState(false);
 
-  const apikey = import.meta.env.VITE_GEOAPIFY_API_KEY;
 
-  var requestOptions = {
-    method: "GET",
-  };
+
 
   const getQuote = async () => {
     if (!selectedOrigin || !selectedDestination) return;
@@ -59,14 +54,24 @@ function QuoteForm() {
     await setConsultingData(false);
     await navigate('/trip', { state: { tripData: data } });
   }
-
   const getAutocomplete = (text: string, isOrigin: boolean) => {
     if (text === "") return;
-    fetch(
-      `https://api.geoapify.com/v1/geocode/autocomplete?text=${text}&apiKey=${apikey}`,
-      requestOptions
-    )
-      .then((response) => response.json())
+
+    fetch(`http://localhost:3000/api/autocompletation`, {
+      method: "POST", // Cambiado a POST
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: text,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((result) => {
         if (!result.features) return;
 
@@ -121,8 +126,20 @@ function QuoteForm() {
     setDestinationOptions([]);
   }, [selectedDestination])
 
+  const switchLocations = () => {
+    const temp = selectedOrigin;
+    setSelectedOrigin(selectedDestination);
+    setOrigin(selectedDestination?.address1 || "");
+    setSelectedDestination(temp);
+    setDestination(temp?.address1 || "");
+  }
+
+
   return (
     <div className="absolute top-1/3 flex flex-col justify-start gap-y-8 items-center h-3/6 w-full">
+      {/*<div className="w-[500px] h-[500px] bg-gray-50 ">
+        <Map />
+      </div>*/}
       <div className="flex flex-col w-5/6 items-center relative">
         <Label className="self-start mb-2 text-white text-lg">
           Punto de Salida
@@ -141,7 +158,8 @@ function QuoteForm() {
         </div>
         <LocationList options={originOptions} isOrigin={true} setSelectedOrigin={setSelectedOrigin} setSelectedDestination={setSelectedDestination} />
       </div>
-      <div className="bg-blue-500 w-8 h-8 flex justify-center items-center rounded-lg cursor-pointer shadow-xl">
+      {/* Switch Location Button */}
+      <div onClick={() => { switchLocations() }} className="bg-blue-500 w-8 h-8 flex justify-center items-center rounded-lg cursor-pointer shadow-xl">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-transfer text-white p-1"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 10h-16l5.5 -6" /><path d="M4 14h16l-5.5 6" /></svg>
       </div>
       <div className="flex flex-col w-5/6 items-center relative">
