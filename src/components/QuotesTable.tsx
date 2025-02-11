@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Table,
     TableBody,
@@ -11,19 +11,11 @@ import {
 
 
 interface TripData {
-    tripdata: { name: string, quotation: { name: string, price: number }[] }[]
+    tripdata: { name: string, quotation: { [key: string]: { services: { name: string, price: number }[] } } }[],
+    selectedVehicle: string
 }
 
-const VehicleSwitch = () => {
-    return (
-        <div className="w-1/6">
-            <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                <input type="checkbox" name="toggle" id="toggle" className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
-                <label htmlFor="toggle" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer">vehiculo</label>
-            </div>
-        </div>
-    )
-}
+
 
 
 
@@ -43,15 +35,11 @@ const detailsTable = (details: { name: string, price: number }[], displayed: boo
 }
 
 
-const baseLogoUrl = '../../images/';
-
-export default function CollapsibleTable({ tripdata }: TripData) {
-
+export default function CollapsibleTable({ tripdata, selectedVehicle }: TripData) {
     const [openDetails, setOpenDetails] = useState({ index: -1, open: false });
-
     return (
         <>
-            <Table className='m-auto bg-white w-11/12 mt-24 rounded-lg shadow-lg'>
+            <Table className='m-auto bg-white w-11/12 mt-12 rounded-lg shadow-lg'>
                 <TableCaption>* Precios aproximados</TableCaption>
                 <TableHeader>
                     <TableRow>
@@ -61,12 +49,12 @@ export default function CollapsibleTable({ tripdata }: TripData) {
                 </TableHeader>
                 <TableBody className='w-full'>
                     {tripdata.map((trip, index) => {
-                        trip.quotation.sort((a, b) => a.price - b.price)
+                        trip.quotation[selectedVehicle].services.sort((a: { price: number }, b: { price: number }) => a.price - b.price)
                         return (
                             <>
                                 <TableRow key={index} className="w-full">
                                     <TableCell key={index} className="text-center align-middle w-1/2 p-6"><img src={`/images/${trip.name}.png`} className='w-3/4' alt={trip.name} /></TableCell>
-                                    <TableCell key={index} className="text-center align-middle py-4">{`Desde ${trip.quotation[0].price} $`}</TableCell>
+                                    <TableCell key={index} className="text-center align-middle py-4">{`Desde ${trip.quotation[selectedVehicle].services[0].price} $`}</TableCell>
                                     <TableCell key={`${index}-arrow`} onClick={() => { setOpenDetails({ index, open: !openDetails.open || openDetails.index !== index }) }} className="text-center align-middle w-1/6 cursor-pointer">
                                         {openDetails.open && openDetails.index === index ? (
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 mx-auto cursor-pointer icon icon-tabler icons-tabler-outline icon-tabler-chevron-up">
@@ -81,7 +69,7 @@ export default function CollapsibleTable({ tripdata }: TripData) {
                                 </TableRow>
                                 <TableRow className="w-full">
                                     <TableCell colSpan={3} className="p-0">
-                                        {detailsTable(trip.quotation, openDetails.open && openDetails.index === index)}
+                                        {detailsTable(trip.quotation[selectedVehicle].services, openDetails.open && openDetails.index === index)}
                                     </TableCell>
                                 </TableRow>
                             </>

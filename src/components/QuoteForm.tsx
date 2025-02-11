@@ -34,6 +34,8 @@ function QuoteForm() {
   const getQuote = async () => {
     if (!selectedOrigin || !selectedDestination) return;
     await setConsultingData(true);
+    console.log("selectedOrigin: ", selectedOrigin);
+    console.log("selectedDestination: ", selectedDestination);
     const response = await fetch(`http://localhost:3000/api/quotation`, {
       method: "POST",
       headers: {
@@ -186,7 +188,7 @@ function QuoteForm() {
       <div onClick={() => { switchLocations() }} className="bg-blue-500 w-8 h-8 flex justify-center items-center rounded-lg cursor-pointer shadow-xl">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-transfer text-white p-1"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 10h-16l5.5 -6" /><path d="M4 14h16l-5.5 6" /></svg>
       </div>
-      <div className="flex flex-col w-5/6 items-center relative">
+      <div className="flex flex-col w-5/6 items-center relative -mt-6">
         <Label className="self-start mb-2 text-white text-lg">
           Punto de Llegada
         </Label>
