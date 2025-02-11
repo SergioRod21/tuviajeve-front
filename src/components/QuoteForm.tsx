@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import LocationList from '@/components/LocationsList'
-import Map from '@/components/Map'
 
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router';
@@ -18,6 +17,7 @@ function QuoteForm() {
     lon: number;
   }
 
+  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [origin, setOrigin] = useState("");
   const [originOptions, setOriginOptions] = useState([]);
   const [destination, setDestination] = useState("");
@@ -126,6 +126,14 @@ function QuoteForm() {
     setDestinationOptions([]);
   }, [selectedDestination])
 
+  useEffect(() => {
+    if (currentLocation) {
+      setSelectedOrigin(currentLocation);
+      setOrigin(currentLocation.address1);
+    }
+  }, [currentLocation]);
+
+
   const switchLocations = () => {
     const temp = selectedOrigin;
     setSelectedOrigin(selectedDestination);
@@ -135,11 +143,24 @@ function QuoteForm() {
   }
 
 
+  const fetchCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const location = {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        address1: "Ubicación actual",
+      };
+      setCurrentLocation(location);
+      console.log("location", location);
+    }, (error) => {
+      console.error("Error getting current location", error);
+    });
+  }
+
+
+
   return (
     <div className="absolute top-1/3 flex flex-col justify-start gap-y-8 items-center h-3/6 w-full">
-      {/*<div className="w-[500px] h-[500px] bg-gray-50 ">
-        <Map />
-      </div>*/}
       <div className="flex flex-col w-5/6 items-center relative">
         <Label className="self-start mb-2 text-white text-lg">
           Punto de Salida
@@ -152,6 +173,9 @@ function QuoteForm() {
             onChange={(event) => setOrigin(event.target.value)}
             disabled={!!selectedOrigin}
           />
+          <Button onClick={() => { fetchCurrentLocation() }} className={`${currentLocation ? "hidden" : ""} items-center absolute right-0 top-0 h-full bg-blue-500 font-semibold text-slate-200 p-6 text-xl`}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-24 h-24 icon icon-tabler icons-tabler-filled icon-tabler-current-location"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 1a1 1 0 0 1 1 1v1.055a9.004 9.004 0 0 1 7.946 7.945h1.054a1 1 0 0 1 0 2h-1.055a9.004 9.004 0 0 1 -7.944 7.945l-.001 1.055a1 1 0 0 1 -2 0v-1.055a9.004 9.004 0 0 1 -7.945 -7.944l-1.055 -.001a1 1 0 0 1 0 -2h1.055a9.004 9.004 0 0 1 7.945 -7.945v-1.055a1 1 0 0 1 1 -1m0 4a7 7 0 1 0 0 14a7 7 0 0 0 0 -14m0 3a4 4 0 1 1 -4 4l.005 -.2a4 4 0 0 1 3.995 -3.8" /></svg>
+          </Button>
           <Button onClick={() => setSelectedOrigin(undefined)} className={`${selectedOrigin ? "flex" : "hidden"} items-center absolute right-0 top-0 h-full bg-slate-200 font-semibold text-slate-800 hover:text-slate-200 p-6 text-lg`}>
             X
           </Button>
