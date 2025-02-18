@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 
 interface LocationsListProps {
-  options: { address1: string , address2: string, lat: number, lon: number}[],
+  options: { address1: string, address2: string, lat: number, lon: number }[],
   isOrigin: boolean,
   setSelectedOrigin: (location: Location) => void,
   setSelectedDestination: (location: Location) => void,
+  setMapData: (location: selectedLocation) => void;
 }
 
 interface Location {
@@ -13,14 +14,22 @@ interface Location {
   lon: number;
 }
 
-function LocationsList({ options, isOrigin, setSelectedOrigin, setSelectedDestination }: LocationsListProps) {
- 
+interface selectedLocation extends Location {
+  type: 'origin' | 'destination';
+}
+
+function LocationsList({ options, isOrigin, setSelectedOrigin, setSelectedDestination, setMapData }: LocationsListProps) {
+
   const handleSelect = (location: Location) => {
     if (isOrigin) {
       setSelectedOrigin(location);
+      setMapData({ ...location, type: 'origin' });
     } else {
       setSelectedDestination(location);
+      setMapData({ ...location, type: 'destination' });
+
     }
+    console.log("Location: ", location);
   }
 
   useEffect(() => {
@@ -37,7 +46,7 @@ function LocationsList({ options, isOrigin, setSelectedOrigin, setSelectedDestin
               <p className="text-sm text-gray-700">{item.address2}</p>
             </li>
           );
-          })
+        })
         }
       </ul>
     </div>
