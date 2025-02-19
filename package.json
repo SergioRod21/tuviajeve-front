@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite",
+    "start": "serve dist -s -n -L -p $PORT",
     "dev": "vite",
     "build": "vite build",
-    "postinstall": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
