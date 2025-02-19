@@ -67,7 +67,7 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
     console.log(`Origen: ${selectedOrigin.address1}, latitud: ${selectedOrigin.lat}, longitud: ${selectedOrigin.lon}`);
     console.log(`Destino: ${selectedDestination.address1}, latitud: ${selectedDestination.lat}, longitud: ${selectedDestination.lon}`);
     await setConsultingData(true);
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/quotation`, {
+    const response = await fetch(`https://tuviajeve-back-production.up.railway.app/api/quotation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +90,7 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
   const getAutocomplete = (text: string, isOrigin: boolean) => {
     if (text === "") return;
 
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/autocompletation`, {
+    fetch(`https://tuviajeve-back-production.up.railway.app/api/autocompletation`, {
       method: "POST", // Cambiado a POST
       headers: {
         "Content-Type": "application/json",
