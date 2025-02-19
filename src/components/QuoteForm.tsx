@@ -4,10 +4,8 @@ import { Button } from "@/components/ui/button";
 import LocationList from '@/components/LocationsList'
 
 import { useState, useEffect } from "react";
-import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from 'react-router';
 import Spinner from "./Spinner";
-import MapModal from "./MapModal";
 
 
 

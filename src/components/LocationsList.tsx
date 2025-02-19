@@ -1,4 +1,3 @@
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
 
 interface LocationsListProps {
   options: { address1: string, address2: string, lat: number, lon: number }[],
