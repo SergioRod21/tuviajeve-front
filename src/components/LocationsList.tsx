@@ -29,12 +29,7 @@ function LocationsList({ options, isOrigin, setSelectedOrigin, setSelectedDestin
       setMapData({ ...location, type: 'destination' });
 
     }
-    console.log("Location: ", location);
   }
-
-  useEffect(() => {
-    console.log("Opciones: ", options);
-  }, [options]);
 
   return (
     <div className={`w-full bg-white rounded-md mt-[4px] shadow-2xl z-10 absolute top-full ${options.length > 0 ? "block" : "hidden"}`}>

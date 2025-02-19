@@ -10,7 +10,6 @@ function Trip() {
     const [selectedVehicle, setSelectedVehicle] = useState('Automovil');
 
 
-    console.log("tripData", tripData)
 
     const VehicleSwitch = () => {
         return (

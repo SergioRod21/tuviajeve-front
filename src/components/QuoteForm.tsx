@@ -21,9 +21,11 @@ interface Location {
 
 interface QuoteFormProps {
   setMapData: (location: Location) => void;
+  changedOrigin?: Location;
+  changedDestination?: Location;
 }
 
-function QuoteForm({ setMapData }: QuoteFormProps) {
+function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormProps) {
 
   const navigate = useNavigate();
 
@@ -45,14 +47,29 @@ function QuoteForm({ setMapData }: QuoteFormProps) {
   const [consultingData, setConsultingData] = useState(false);
 
 
+  useEffect(() => {
+    console.log("Origen modificado: ", changedOrigin);
+    if (changedOrigin) {
+      setSelectedOrigin(changedOrigin);
+      setOrigin(changedOrigin.address1);
+    }
+  }, [changedOrigin])
 
+  useEffect(() => {
+    console.log("Destino modificado: ", changedDestination);
+    if (changedDestination) {
+      setSelectedDestination(changedDestination);
+      setDestination(changedDestination.address1);
+    }
+  }, [changedDestination])
 
   const getQuote = async () => {
     if (!selectedOrigin || !selectedDestination) return;
+    console.log(`Consultando cotización...: `);
+    console.log(`Origen: ${selectedOrigin.address1}, latitud: ${selectedOrigin.lat}, longitud: ${selectedOrigin.lon}`);
+    console.log(`Destino: ${selectedDestination.address1}, latitud: ${selectedDestination.lat}, longitud: ${selectedDestination.lon}`);
     await setConsultingData(true);
-    console.log("selectedOrigin: ", selectedOrigin);
-    console.log("selectedDestination: ", selectedDestination);
-    const response = await fetch(`http://localhost:3000/api/quotation`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/api/quotation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +92,7 @@ function QuoteForm({ setMapData }: QuoteFormProps) {
   const getAutocomplete = (text: string, isOrigin: boolean) => {
     if (text === "") return;
 
-    fetch(`http://localhost:3000/api/autocompletation`, {
+    fetch(`${process.env.BACKEND_URL}/api/autocompletation`, {
       method: "POST", // Cambiado a POST
       headers: {
         "Content-Type": "application/json",
@@ -170,7 +187,6 @@ function QuoteForm({ setMapData }: QuoteFormProps) {
       };
       setCurrentLocation(location);
       setMapData({ ...location, type: 'origin' });
-      console.log("location", location);
     }, (error) => {
       console.error("Error getting current location", error);
     });
@@ -179,7 +195,7 @@ function QuoteForm({ setMapData }: QuoteFormProps) {
 
 
   return (
-    <div className="absolute top-1/3 flex flex-col justify-start gap-y-8 items-center h-3/6 w-full">
+    <div className="absolute top-1/3 flex flex-col justify-start gap-y-8 items-center h-3/6 w-full max-w-[100ch]">
       <div className="flex flex-col w-5/6 items-center relative">
         <Label className="self-start mb-2 text-white text-lg">
           Punto de Salida

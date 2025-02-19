@@ -39,7 +39,7 @@ export default function CollapsibleTable({ tripdata, selectedVehicle }: TripData
     const [openDetails, setOpenDetails] = useState({ index: -1, open: false });
     return (
         <>
-            <Table className='m-auto bg-white w-11/12 mt-12 rounded-lg shadow-lg'>
+            <Table className='m-auto bg-white w-11/12 mt-12 rounded-lg shadow-lg max-w-[100ch]'>
                 <TableCaption>* Precios aproximados</TableCaption>
                 <TableHeader>
                     <TableRow>
