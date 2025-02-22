@@ -32,16 +32,11 @@ function MapModal({ location, isModalOpen, setIsModalOpen, setChangedOrigin, set
     }, [isModalOpen])
 
 
-    useEffect(() => {
-        if (newLocation) {
-            console.log("Ubicacion actualizada: ", newLocation);
-        }
-    }, [newLocation])
 
     return (
         <div
             className={`${isModalOpen ? '' : 'hidden'
-                } fixed flex flex-col items-center justify-between top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-2/4 bg-gray-900 z-[50] rounded-lg pb-6 max-w-[65ch]`}
+                } fixed flex flex-col items-center justify-between top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-5/6 h-3/4 md:h-2/4 bg-gray-900 z-[50] rounded-lg pb-6 max-w-[65ch]`}
         >
             <p
                 onClick={() => setIsModalOpen(false)}
@@ -53,8 +48,8 @@ function MapModal({ location, isModalOpen, setIsModalOpen, setChangedOrigin, set
                 Confirme la ubicación
             </p>
             <Map location={location} changingLocation={changingLocation} setNewLocation={setNewLocation} />
-            <div className={`w-5/6 h-1/6 flex ${changingLocation ? "flex-col" : ""} justify-around items-center`}>
-                <p className={`${changingLocation ? "" : "hidden"}  text-white font-medium text-sm mt-2`}>Por favor, mueva el marcador a la ubicación deseada</p>
+            <div className={`w-5/6 h-1/6 flex ${changingLocation ? "flex-col" : ""} justify-around items-center mt-2 pb-2`}>
+                <p className={`${changingLocation ? "" : "hidden"}  text-white text-center font-medium text-sm mt-6 md:mt-2`}>Por favor, mueva el marcador a la ubicación deseada</p>
                 <Button onClick={() => { changeLocation() }} variant='destructive' className={`${changingLocation ? 'hidden' : ""} py-6 text-white w-1/2 m-2 h-1/2`}>
                     Cambiar
                 </Button>

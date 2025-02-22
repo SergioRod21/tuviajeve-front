@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "serve dist -s -n -L -p 3000",
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --host",
+    "build": "tsc && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

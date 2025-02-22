@@ -36,6 +36,7 @@ const detailsTable = (details: { name: string, price: number }[], displayed: boo
 
 
 export default function CollapsibleTable({ tripdata, selectedVehicle }: TripData) {
+    console.log("tripdata: ", tripdata)
     const [openDetails, setOpenDetails] = useState({ index: -1, open: false });
     return (
         <>
@@ -53,7 +54,11 @@ export default function CollapsibleTable({ tripdata, selectedVehicle }: TripData
                         return (
                             <>
                                 <TableRow key={index} className="w-full">
-                                    <TableCell key={index} className="text-center align-middle w-1/2 p-6"><img src={`/images/${trip.name}.png`} className='w-3/4' alt={trip.name} /></TableCell>
+                                    <TableCell key={index} className="text-center align-middle w-1/2 md:w-1/3 p-6">
+                                        <div className="flex justify-center">
+                                            <img src={`/images/${trip.name}.png`} className='w-3/4' alt={trip.name} />
+                                        </div>
+                                    </TableCell>
                                     <TableCell key={index} className="text-center align-middle py-4">{`Desde ${trip.quotation[selectedVehicle].services[0].price} $`}</TableCell>
                                     <TableCell key={`${index}-arrow`} onClick={() => { setOpenDetails({ index, open: !openDetails.open || openDetails.index !== index }) }} className="text-center align-middle w-1/6 cursor-pointer">
                                         {openDetails.open && openDetails.index === index ? (

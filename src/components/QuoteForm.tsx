@@ -46,7 +46,6 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
 
 
   useEffect(() => {
-    console.log("Origen modificado: ", changedOrigin);
     if (changedOrigin) {
       setSelectedOrigin(changedOrigin);
       setOrigin(changedOrigin.address1);
@@ -54,7 +53,6 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
   }, [changedOrigin])
 
   useEffect(() => {
-    console.log("Destino modificado: ", changedDestination);
     if (changedDestination) {
       setSelectedDestination(changedDestination);
       setDestination(changedDestination.address1);
@@ -63,9 +61,9 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
 
   const getQuote = async () => {
     if (!selectedOrigin || !selectedDestination) return;
-    console.log(`Consultando cotización...: `);
-    console.log(`Origen: ${selectedOrigin.address1}, latitud: ${selectedOrigin.lat}, longitud: ${selectedOrigin.lon}`);
-    console.log(`Destino: ${selectedDestination.address1}, latitud: ${selectedDestination.lat}, longitud: ${selectedDestination.lon}`);
+    (`Consultando cotización...: `);
+    (`Origen: ${selectedOrigin.address1}, latitud: ${selectedOrigin.lat}, longitud: ${selectedOrigin.lon}`);
+    (`Destino: ${selectedDestination.address1}, latitud: ${selectedDestination.lat}, longitud: ${selectedDestination.lon}`);
     await setConsultingData(true);
     const response = await fetch(`https://tuviajeve-back-production.up.railway.app/api/quotation`, {
       method: "POST",
@@ -217,7 +215,7 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
       </div>
       {/* Switch Location Button */}
       <div onClick={() => { switchLocations() }} className="bg-blue-500 w-8 h-8 flex justify-center items-center rounded-lg cursor-pointer shadow-xl">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-transfer text-white p-1"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 10h-16l5.5 -6" /><path d="M4 14h16l-5.5 6" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-transfer text-white p-1 w-10 h-10"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M20 10h-16l5.5 -6" /><path d="M4 14h16l-5.5 6" /></svg>
       </div>
       <div className="flex flex-col w-5/6 items-center relative -mt-6">
         <Label className="self-start mb-2 text-white text-lg">
@@ -237,7 +235,7 @@ function QuoteForm({ setMapData, changedOrigin, changedDestination }: QuoteFormP
         </div>
         <LocationList options={destinationOptions} setMapData={setMapData} isOrigin={false} setSelectedOrigin={setSelectedOrigin} setSelectedDestination={setSelectedDestination} />
       </div>
-      <Button className="bg-blue-500 font-semibold text-white p-6 text-lg rounded-xl w-2/6" onClick={() => getQuote()}>
+      <Button className="bg-blue-500 font-semibold text-white p-6 text-lg rounded-xl w-2/6 md:w-1/6" onClick={() => getQuote()}>
         {consultingData ? <Spinner /> : "Consultar"}
       </Button>
     </div>

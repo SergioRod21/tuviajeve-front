@@ -24,13 +24,6 @@ function App() {
     }
   }, [mapData]);
 
-  useEffect(() => {
-    console.log("Origen modificado: ", changedOrigin);
-  }, [changedOrigin])
-
-  useEffect(() => {
-    console.log("Destino modificado: ", changedDestination);
-  }, [changedDestination])
 
   return (
     <div className='w-full h-screen flex flex-col justify-between items-center bg-gray-900 relative'>
